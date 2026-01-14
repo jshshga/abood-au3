@@ -29,6 +29,19 @@ local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "NeonSystem_Final"
 ScreenGui.ResetOnSpawn = false
 
+-- [ وظيفة الانميشن ]
+local function ClickEffect(button)
+    local originalSize = button.Size
+    local originalColor = button.BackgroundColor3
+    
+    local tweenInfo = TweenInfo.new(0.05, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, true)
+    local tween = TweenService:Create(button, tweenInfo, {
+        Size = UDim2.new(originalSize.X.Scale * 1.05, originalSize.X.Offset + 5, originalSize.Y.Scale * 1.05, originalSize.Y.Offset + 5),
+        BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+    })
+    tween:Play()
+end
+
 -- [ زر الفتح ]
 local OpenBtn = Instance.new("TextButton", ScreenGui)
 OpenBtn.Size = UDim2.new(0, 50, 0, 50)
@@ -129,7 +142,7 @@ AttackBtn.TextColor3 = Color3.new(1, 1, 1)
 AttackBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", AttackBtn)
 
--- [ واجهة الإعدادات ]
+-- [ واجهة الإعدادات - معدلة للتوسيط ]
 local SettingsFrame = Instance.new("Frame", ScreenGui)
 SettingsFrame.Size = UDim2.new(0, 0, 0, 0)
 SettingsFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -141,11 +154,15 @@ Instance.new("UICorner", SettingsFrame).CornerRadius = UDim.new(0, 25)
 Instance.new("UIStroke", SettingsFrame).Color = Color3.fromRGB(0, 255, 255)
 
 local SettingsScroll = Instance.new("ScrollingFrame", SettingsFrame)
-SettingsScroll.Size = UDim2.new(1, -20, 1, -70)
-SettingsScroll.Position = UDim2.new(0, 10, 0, 60)
+SettingsScroll.Size = UDim2.new(1, -20, 1, -80)
+SettingsScroll.Position = UDim2.new(0.5, 0, 0.5, 20)
+SettingsScroll.AnchorPoint = Vector2.new(0.5, 0.5)
 SettingsScroll.BackgroundTransparency = 1
 SettingsScroll.CanvasSize = UDim2.new(0, 0, 0, 650)
-Instance.new("UIListLayout", SettingsScroll).Padding = UDim.new(0, 15)
+SettingsScroll.ScrollBarThickness = 2
+local ListLayout = Instance.new("UIListLayout", SettingsScroll)
+ListLayout.Padding = UDim.new(0, 15)
+ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local SetClose = Instance.new("TextButton", SettingsFrame)
 SetClose.Size = UDim2.new(0, 30, 0, 30)
@@ -179,6 +196,7 @@ local PrefixInput = Instance.new("TextBox", SettingsScroll)
 PrefixInput.Size = UDim2.new(0.9, 0, 0, 45)
 PrefixInput.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
 PrefixInput.Text = currentPrefix
+PrefixInput.PlaceholderText = "Prefix..."
 PrefixInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", PrefixInput)
 
@@ -206,7 +224,10 @@ local CmdScroll = Instance.new("ScrollingFrame", SettingsScroll)
 CmdScroll.Size = UDim2.new(0.9, 0, 0, 160)
 CmdScroll.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
 CmdScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
-Instance.new("UIListLayout", CmdScroll).Padding = UDim.new(0, 5)
+CmdScroll.ScrollBarThickness = 2
+local CmdListLayout = Instance.new("UIListLayout", CmdScroll)
+CmdListLayout.Padding = UDim.new(0, 5)
+CmdListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
 local function UpdateCmdListUI()
     for _, v in ipairs(CmdScroll:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
@@ -225,7 +246,7 @@ UpdateCmdListUI()
 AddBtn.MouseButton1Click:Connect(function() 
     if AddCmdInput.Text ~= "" then 
         local cmdText = AddCmdInput.Text
-        if not cmdText:find("%%[target%%]") then cmdText = cmdText .. " [target]" end
+        if not cmdText:find("%[target%]") then cmdText = cmdText .. " [target]" end
         table.insert(attackCommands, cmdText) 
         SaveCommands() 
         AddCmdInput.Text = "" 
@@ -244,13 +265,17 @@ OpenBtn.MouseButton1Click:Connect(function() MainFrame.Visible = true; OpenBtn.V
 PrefixInput:GetPropertyChangedSignal("Text"):Connect(function() currentPrefix = PrefixInput.Text end)
 
 LoopBtn.MouseButton1Click:Connect(function()
+    ClickEffect(LoopBtn)
     local count = tonumber(LoopCountInput.Text) or 1
     if CommandInput.Text ~= "" then
-        for i = 1, count do task.spawn(function() remote:InvokeServer(CommandInput.Text) end) end
+        for i = 1, count do 
+            task.spawn(function() remote:InvokeServer(CommandInput.Text) end) 
+        end
     end
 end)
 
 AttackBtn.MouseButton1Click:Connect(function()
+    ClickEffect(AttackBtn)
     attackLoop = not attackLoop
     AttackBtn.Text = attackLoop and "ATTACKING... (MAX)" or "INSTANE ATTACK: OFF"
     AttackBtn.BackgroundColor3 = attackLoop and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(255, 20, 60)
@@ -259,10 +284,13 @@ AttackBtn.MouseButton1Click:Connect(function()
             while attackLoop do
                 if TargetInput.Text ~= "" then
                     for _, cmd in ipairs(attackCommands) do
-                        task.spawn(function() remote:InvokeServer(currentPrefix .. cmd:gsub("%%[target%%]", TargetInput.Text)) end)
+                        -- سرعة هائلة باستخدام الـ Threads
+                        task.spawn(function() 
+                            remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) 
+                        end)
                     end
                 end
-                task.wait(0.05)
+                task.wait(0.01) -- سرعة قصوى
             end
         end)
     end
@@ -290,11 +318,10 @@ AntiSpamBtn.MouseButton1Click:Connect(function()
     AntiSpamBtn.BackgroundColor3 = antiSpamActive and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(30, 30, 35)
 end)
 
--- [ نظام الحماية القوي (الذي طلبته) ]
+-- [ نظام الحماية القوي ]
 RunService.Heartbeat:Connect(function()
     if antiSpamActive then
         pcall(function()
-            -- يحذف من الـ HDAdminGui ومن كامل الـ PlayerGui أي شيء يخص الإشعارات
             for _, v in ipairs(plr.PlayerGui:GetDescendants()) do
                 if v.Name:find("Notice") or v.Name:find("Logs") or v.Name:find("Alert") then 
                     v:Destroy() 
