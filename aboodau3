@@ -9,15 +9,15 @@ local plr = Players.LocalPlayer
 local currentPrefix = ";" 
 local attackCommands = { "logs [target]", "re [target]" } 
 
--- [ نظام الحفظ ]
+-- [[ نظام الحفظ ]]
 local function SaveCommands()
-    pcall(function() writefile("NeonAttack_Config.json", HttpService:JSONEncode(attackCommands)) end)
+    pcall(function() writefile("ABOAU_Config.json", HttpService:JSONEncode(attackCommands)) end)
 end
 
 local function LoadCommands()
     pcall(function()
-        if isfile and isfile("NeonAttack_Config.json") then
-            attackCommands = HttpService:JSONDecode(readfile("NeonAttack_Config.json"))
+        if isfile and isfile("ABOAU_Config.json") then
+            attackCommands = HttpService:JSONDecode(readfile("ABOAU_Config.json"))
         end
     end)
 end
@@ -29,23 +29,20 @@ local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "NeonSystem_Final"
 ScreenGui.ResetOnSpawn = false
 
--- [ وظيفة الانميشن ]
+-- [ أنميشن الضغط ]
 local function ClickEffect(button)
     local originalSize = button.Size
-    local originalColor = button.BackgroundColor3
-    
     local tweenInfo = TweenInfo.new(0.05, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, true)
     local tween = TweenService:Create(button, tweenInfo, {
-        Size = UDim2.new(originalSize.X.Scale * 1.05, originalSize.X.Offset + 5, originalSize.Y.Scale * 1.05, originalSize.Y.Offset + 5),
-        BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+        Size = UDim2.new(originalSize.X.Scale * 1.05, originalSize.X.Offset + 5, originalSize.Y.Scale * 1.05, originalSize.Y.Offset + 5)
     })
     tween:Play()
 end
 
--- [ زر الفتح ]
+-- [[ زر الفتح (N) - TOP LEFT ]]
 local OpenBtn = Instance.new("TextButton", ScreenGui)
 OpenBtn.Size = UDim2.new(0, 50, 0, 50)
-OpenBtn.Position = UDim2.new(0, 10, 0.5, -25)
+OpenBtn.Position = UDim2.new(0, 15, 0.15, 0) 
 OpenBtn.BackgroundColor3 = Color3.fromRGB(15, 15, 17)
 OpenBtn.Text = "N"
 OpenBtn.TextColor3 = Color3.fromRGB(0, 255, 255)
@@ -56,7 +53,7 @@ local OpenStroke = Instance.new("UIStroke", OpenBtn)
 OpenStroke.Color = Color3.fromRGB(0, 255, 255)
 OpenStroke.Thickness = 2
 
--- [ الإطار الرئيسي ]
+-- [[ الإطار الرئيسي - ABOAU ]]
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 360, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -180, 0.5, -210)
@@ -68,7 +65,16 @@ local MainStroke = Instance.new("UIStroke", MainFrame)
 MainStroke.Thickness = 3
 MainStroke.Color = Color3.fromRGB(0, 255, 255)
 
--- [ وظيفة إنشاء العناوين ]
+local TitleLbl = Instance.new("TextLabel", MainFrame)
+TitleLbl.Size = UDim2.new(0, 100, 0, 30)
+TitleLbl.Position = UDim2.new(0.07, 0, 0.03, 0)
+TitleLbl.BackgroundTransparency = 1
+TitleLbl.Text = "ABOAU"
+TitleLbl.TextColor3 = Color3.fromRGB(0, 255, 255)
+TitleLbl.Font = Enum.Font.GothamBold
+TitleLbl.TextSize = 18
+TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
+
 local function CreateLabel(txt, pos, parent)
     local lbl = Instance.new("TextLabel", parent)
     lbl.Text = txt
@@ -78,11 +84,10 @@ local function CreateLabel(txt, pos, parent)
     lbl.TextColor3 = Color3.fromRGB(0, 255, 255)
     lbl.TextXAlignment = Enum.TextXAlignment.Left
     lbl.Font = Enum.Font.GothamBold
-    lbl.TextSize = 12
+    lbl.TextSize = 11
     return lbl
 end
 
--- [ أزرار التحكم العلوي ]
 local CloseBtn = Instance.new("TextButton", MainFrame)
 CloseBtn.Size = UDim2.new(0, 32, 0, 32)
 CloseBtn.Position = UDim2.new(1, -45, 0, 15)
@@ -97,7 +102,7 @@ SettingsBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
 SettingsBtn.Text = "⚙"
 Instance.new("UICorner", SettingsBtn).CornerRadius = UDim.new(1, 0)
 
--- [ الخانات الرئيسية ]
+-- الخانات الرئيسية
 CreateLabel("COMMAND BAR:", UDim2.new(0.075, 0, 0.15, 0), MainFrame)
 local CommandInput = Instance.new("TextBox", MainFrame)
 CommandInput.Size = UDim2.new(0.85, 0, 0, 40)
@@ -142,7 +147,40 @@ AttackBtn.TextColor3 = Color3.new(1, 1, 1)
 AttackBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", AttackBtn)
 
--- [ واجهة الإعدادات - معدلة للتوسيط ]
+-- [[ منطق الحماية القوي LOR ]]
+local antiSpamActive = false
+local deleteTargets = {
+    PlayerGui = {"CommandMenucommandLogs", "CommandMenuchatLogs", "Notices", "CustomTopBar", "CmdBar", "HDAdminNightVision"},
+    Workspace = {"HDAdminNightVision"},
+    Characters = {"HDAdminNightVision"}
+}
+
+local function toggleLOR_Assets(state)
+    pcall(function()
+        local assets = ReplicatedStorage:WaitForChild("HDAdminHDClient"):WaitForChild("Assets")
+        local nv = assets:FindFirstChild(state == "start" and "NightVision" or "1NightVision")
+        if nv then nv.Name = (state == "start" and "1NightVision" or "NightVision") end
+        
+        local templates = plr.PlayerGui:WaitForChild("HDAdminInterface"):WaitForChild("MenuTemplates")
+        local temp = templates:FindFirstChild(state == "start" and "Template5" or "Template")
+        if temp then temp.Name = (state == "start" and "Template" or "Template5") end
+    end)
+end
+
+RunService.Heartbeat:Connect(function()
+    if antiSpamActive then
+        pcall(function()
+            for _, name in ipairs(deleteTargets.PlayerGui) do
+                local t = plr.PlayerGui:FindFirstChild(name, true) if t then t:Destroy() end
+            end
+            for _, v in ipairs(plr.PlayerGui:GetDescendants()) do
+                if v.Name:find("Notice") or v.Name:find("Logs") or v.Name:find("Alert") then v:Destroy() end
+            end
+        end)
+    end
+end)
+
+-- [[ واجهة الإعدادات - نفس اللي أرسلتها بالضبط ]]
 local SettingsFrame = Instance.new("Frame", ScreenGui)
 SettingsFrame.Size = UDim2.new(0, 0, 0, 0)
 SettingsFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -164,23 +202,6 @@ local ListLayout = Instance.new("UIListLayout", SettingsScroll)
 ListLayout.Padding = UDim.new(0, 15)
 ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
 
-local SetClose = Instance.new("TextButton", SettingsFrame)
-SetClose.Size = UDim2.new(0, 30, 0, 30)
-SetClose.Position = UDim2.new(1, -40, 0, 15)
-SetClose.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
-SetClose.Text = "X"
-Instance.new("UICorner", SetClose).CornerRadius = UDim.new(1, 0)
-
-SettingsBtn.MouseButton1Click:Connect(function()
-    SettingsFrame.Visible = true
-    SettingsFrame:TweenSize(UDim2.new(0, 380, 0, 480), "Out", "Back", 0.5, true)
-end)
-
-SetClose.MouseButton1Click:Connect(function()
-    SettingsFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.3, true, function() SettingsFrame.Visible = false end)
-end)
-
--- [ أزرار الإعدادات ]
 local function CreateSetBtn(txt, color)
     local btn = Instance.new("TextButton", SettingsScroll)
     btn.Size = UDim2.new(0.9, 0, 0, 45)
@@ -192,6 +213,14 @@ local function CreateSetBtn(txt, color)
     return btn
 end
 
+local SetClose = Instance.new("TextButton", SettingsFrame)
+SetClose.Size = UDim2.new(0, 30, 0, 30)
+SetClose.Position = UDim2.new(1, -40, 0, 15)
+SetClose.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
+SetClose.Text = "X"
+Instance.new("UICorner", SetClose).CornerRadius = UDim.new(1, 0)
+
+-- [ عناصر الإعدادات ]
 local PrefixInput = Instance.new("TextBox", SettingsScroll)
 PrefixInput.Size = UDim2.new(0.9, 0, 0, 45)
 PrefixInput.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
@@ -202,7 +231,7 @@ Instance.new("UICorner", PrefixInput)
 
 local HeadlessBtn = CreateSetBtn("HIDDEN HEAD", Color3.fromRGB(0, 255, 255))
 local SkyboxBtn = CreateSetBtn("SKYBOX & EMOTE", Color3.fromRGB(170, 0, 255))
-local AntiSpamBtn = CreateSetBtn("ANTI SPAM: OFF", Color3.fromRGB(255, 100, 0))
+local AntiSpamBtn = CreateSetBtn("ANTI SPAM: OFF ❌", Color3.fromRGB(255, 100, 0))
 
 local AddCmdFrame = Instance.new("Frame", SettingsScroll)
 AddCmdFrame.Size = UDim2.new(0.9, 0, 0, 45)
@@ -243,6 +272,22 @@ local function UpdateCmdListUI()
 end
 UpdateCmdListUI()
 
+-- [[ منطق العمل ]]
+local remote = ReplicatedStorage:WaitForChild("HDAdminHDClient"):WaitForChild("Signals"):WaitForChild("RequestCommandSilent")
+local attackLoop = false
+local isHeadless, isSkybox = false, false
+
+SettingsBtn.MouseButton1Click:Connect(function()
+    SettingsFrame.Visible = true
+    SettingsFrame:TweenSize(UDim2.new(0, 380, 0, 480), "Out", "Back", 0.5, true)
+end)
+
+SetClose.MouseButton1Click:Connect(function()
+    SettingsFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.3, true, function() SettingsFrame.Visible = false end)
+end)
+
+PrefixInput:GetPropertyChangedSignal("Text"):Connect(function() currentPrefix = PrefixInput.Text end)
+
 AddBtn.MouseButton1Click:Connect(function() 
     if AddCmdInput.Text ~= "" then 
         local cmdText = AddCmdInput.Text
@@ -254,23 +299,37 @@ AddBtn.MouseButton1Click:Connect(function()
     end 
 end)
 
--- [ منطق العمل ]
-local remote = ReplicatedStorage:WaitForChild("HDAdminHDClient"):WaitForChild("Signals"):WaitForChild("RequestCommandSilent")
-local antiSpamActive, attackLoop = false, false
-local isHeadless, isSkybox = false, false
+HeadlessBtn.MouseButton1Click:Connect(function() 
+    ClickEffect(HeadlessBtn)
+    isHeadless = not isHeadless
+    if isHeadless then remote:InvokeServer(currentPrefix .. "head me 134082579") HeadlessBtn.Text = "HIDDEN HEAD: ON"
+    else remote:InvokeServer(currentPrefix .. "re me") HeadlessBtn.Text = "HIDDEN HEAD" end
+end)
 
-CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false; OpenBtn.Visible = true end)
-OpenBtn.MouseButton1Click:Connect(function() MainFrame.Visible = true; OpenBtn.Visible = false end)
+SkyboxBtn.MouseButton1Click:Connect(function() 
+    ClickEffect(SkyboxBtn)
+    isSkybox = not isSkybox
+    if isSkybox then
+        remote:InvokeServer(currentPrefix .. "skybox 15117424103") 
+        remote:InvokeServer(currentPrefix .. "bundle me 148351107651039")
+        remote:InvokeServer(currentPrefix .. "emote me 93224413172183")
+        SkyboxBtn.Text = "SKYBOX & EMOTE: ON"
+    else remote:InvokeServer(currentPrefix .. "re me") remote:InvokeServer(currentPrefix .. "unskybox") SkyboxBtn.Text = "SKYBOX & EMOTE" end
+end)
 
-PrefixInput:GetPropertyChangedSignal("Text"):Connect(function() currentPrefix = PrefixInput.Text end)
+AntiSpamBtn.MouseButton1Click:Connect(function()
+    ClickEffect(AntiSpamBtn)
+    antiSpamActive = not antiSpamActive
+    AntiSpamBtn.Text = antiSpamActive and "ANTI SPAM: ON ✅" or "ANTI SPAM: OFF ❌"
+    AntiSpamBtn.BackgroundColor3 = antiSpamActive and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(30, 30, 35)
+    if antiSpamActive then toggleLOR_Assets("start") else toggleLOR_Assets("stop") end
+end)
 
 LoopBtn.MouseButton1Click:Connect(function()
     ClickEffect(LoopBtn)
     local count = tonumber(LoopCountInput.Text) or 1
     if CommandInput.Text ~= "" then
-        for i = 1, count do 
-            task.spawn(function() remote:InvokeServer(CommandInput.Text) end) 
-        end
+        for i = 1, count do task.spawn(function() remote:InvokeServer(CommandInput.Text) end) end
     end
 end)
 
@@ -284,49 +343,14 @@ AttackBtn.MouseButton1Click:Connect(function()
             while attackLoop do
                 if TargetInput.Text ~= "" then
                     for _, cmd in ipairs(attackCommands) do
-                        -- سرعة هائلة باستخدام الـ Threads
-                        task.spawn(function() 
-                            remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) 
-                        end)
+                        task.spawn(function() remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) end)
                     end
                 end
-                task.wait(0.01) -- سرعة قصوى
+                task.wait(0.01)
             end
         end)
     end
 end)
 
-HeadlessBtn.MouseButton1Click:Connect(function() 
-    isHeadless = not isHeadless
-    if isHeadless then remote:InvokeServer(currentPrefix .. "head me 134082579") HeadlessBtn.Text = "HIDDEN HEAD: ON"
-    else remote:InvokeServer(currentPrefix .. "re me") HeadlessBtn.Text = "HIDDEN HEAD" end
-end)
-
-SkyboxBtn.MouseButton1Click:Connect(function() 
-    isSkybox = not isSkybox
-    if isSkybox then
-        remote:InvokeServer(currentPrefix .. "skybox 15117424103") 
-        remote:InvokeServer(currentPrefix .. "bundle me 148351107651039")
-        remote:InvokeServer(currentPrefix .. "emote me 93224413172183")
-        SkyboxBtn.Text = "SKYBOX & EMOTE: ON"
-    else remote:InvokeServer(currentPrefix .. "re me") remote:InvokeServer(currentPrefix .. "unskybox") SkyboxBtn.Text = "SKYBOX & EMOTE" end
-end)
-
-AntiSpamBtn.MouseButton1Click:Connect(function()
-    antiSpamActive = not antiSpamActive
-    AntiSpamBtn.Text = antiSpamActive and "ANTI SPAM: ON ✅" or "ANTI SPAM: OFF ❌"
-    AntiSpamBtn.BackgroundColor3 = antiSpamActive and Color3.fromRGB(0, 200, 100) or Color3.fromRGB(30, 30, 35)
-end)
-
--- [ نظام الحماية القوي ]
-RunService.Heartbeat:Connect(function()
-    if antiSpamActive then
-        pcall(function()
-            for _, v in ipairs(plr.PlayerGui:GetDescendants()) do
-                if v.Name:find("Notice") or v.Name:find("Logs") or v.Name:find("Alert") then 
-                    v:Destroy() 
-                end
-            end
-        end)
-    end
-end)
+CloseBtn.MouseButton1Click:Connect(function() MainFrame.Visible = false; OpenBtn.Visible = true end)
+OpenBtn.MouseButton1Click:Connect(function() MainFrame.Visible = true; OpenBtn.Visible = false end)
