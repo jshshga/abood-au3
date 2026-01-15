@@ -3,59 +3,31 @@ local plr = Players.LocalPlayer
 
 -- [[ نظام الـ BLACKLIST ]]
 local BLACKLIST = {  
-    "Waleedking70",  
-    "JJFH2521",  
-    "Oruspusunnn",  
-    "mlk123456771",  
-    "omarbkp",  
-    "fastma_storage",  
-    "No_Louay",  
-    "ScriptKid",  
-    "AboodAU_Enemy",  
-    "AntiAbood",  
-    "CmdBarDestroyer"
+    "Waleedking70", "JJFH2521", "Oruspusunnn", "mlk123456771", "omarbkp", 
+    "fastma_storage", "No_Louay", "ScriptKid", "AboodAU_Enemy", "AntiAbood", "CmdBarDestroyer"
 }  
 
 local function IsPlayerBlacklisted(playerName)  
     local nameLower = playerName:lower()  
     for _, blacklistedName in ipairs(BLACKLIST) do  
-        if nameLower == blacklistedName:lower() then  
-            return true  
-        end  
+        if nameLower == blacklistedName:lower() then return true end  
     end  
-    return false  
+    return false 
 end  
 
 if IsPlayerBlacklisted(plr.Name) then  
-    local warningGui = Instance.new("ScreenGui", plr.PlayerGui)  
-    warningGui.Name = "BlacklistWarning"  
-    
+    local warningGui = Instance.new("ScreenGui", plr.PlayerGui) 
     local warningFrame = Instance.new("Frame", warningGui)  
     warningFrame.Size = UDim2.new(0, 400, 0, 200)  
     warningFrame.Position = UDim2.new(0.5, -200, 0.5, -100)  
     warningFrame.BackgroundColor3 = Color3.fromRGB(20, 0, 0)  
     Instance.new("UICorner", warningFrame).CornerRadius = UDim.new(0, 15)
-    local warningStroke = Instance.new("UIStroke", warningFrame)
-    warningStroke.Color = Color3.fromRGB(255, 0, 0)
-    warningStroke.Thickness = 3  
-
     local title = Instance.new("TextLabel", warningFrame)  
     title.Size = UDim2.new(1, 0, 0, 50)  
-    title.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  
     title.Text = "⚠️ BLACKLIST DETECTED ⚠️"  
     title.TextColor3 = Color3.new(1, 1, 1)  
     title.Font = Enum.Font.GothamBlack 
     title.TextScaled = true  
-
-    local message = Instance.new("TextLabel", warningFrame)  
-    message.Size = UDim2.new(0.9, 0, 0, 100)  
-    message.Position = UDim2.new(0.05, 0, 0.3, 0)  
-    message.BackgroundTransparency = 1  
-    message.Text = "Player: " .. plr.Name .. "\n\nYou are in the blacklist!\nReason: دز"  
-    message.TextColor3 = Color3.new(1, 1, 1)  
-    message.Font = Enum.Font.GothamBold  
-    message.TextSize = 18  
-
     task.wait(3)  
     plr:Kick("🚫 دز")
     return 
@@ -131,7 +103,6 @@ TitleLbl.Text = "ABOAU"
 TitleLbl.TextColor3 = Color3.fromRGB(0, 255, 255)
 TitleLbl.Font = Enum.Font.GothamBold
 TitleLbl.TextSize = 18
-TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
 
 local function CreateLabel(txt, pos, parent)
     local lbl = Instance.new("TextLabel", parent)
@@ -160,51 +131,55 @@ SettingsBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
 SettingsBtn.Text = "⚙"
 Instance.new("UICorner", SettingsBtn).CornerRadius = UDim.new(1, 0)
 
+-- [[ تعديل الخانات والأزرار ]]
+
 CreateLabel("COMMAND BAR:", UDim2.new(0.075, 0, 0.15, 0), MainFrame)
 local CommandInput = Instance.new("TextBox", MainFrame)
 CommandInput.Size = UDim2.new(0.85, 0, 0, 40)
 CommandInput.Position = UDim2.new(0.075, 0, 0.20, 0)
 CommandInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-CommandInput.Text = ""
+CommandInput.Text = "" -- تم الحذف
+CommandInput.PlaceholderText = "Enter command..."
 CommandInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", CommandInput)
 
-CreateLabel("LOOPS (MAX 100k):", UDim2.new(0.725, 0, 0.32, 0), MainFrame)
-local LoopCountInput = Instance.new("TextBox", MainFrame)
-LoopCountInput.Size = UDim2.new(0.2, 0, 0, 40)
-LoopCountInput.Position = UDim2.new(0.725, 0, 0.37, 0)
-LoopCountInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-LoopCountInput.Text = "1000"
-LoopCountInput.TextColor3 = Color3.new(1, 1, 1)
-Instance.new("UICorner", LoopCountInput)
-
 local LoopBtn = Instance.new("TextButton", MainFrame)
 LoopBtn.Size = UDim2.new(0.6, 0, 0, 40)
-LoopBtn.Position = UDim2.new(0.075, 0, 0.37, 0)
+LoopBtn.Position = UDim2.new(0.075, 0, 0.31, 0) -- تحت الخانة مباشرة
 LoopBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
 LoopBtn.Text = "GIGA BLAST"
 LoopBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", LoopBtn)
 
-CreateLabel("TARGET NAME:", UDim2.new(0.075, 0, 0.55, 0), MainFrame)
+local LoopCountInput = Instance.new("TextBox", MainFrame)
+LoopCountInput.Size = UDim2.new(0.2, 0, 0, 40)
+LoopCountInput.Position = UDim2.new(0.725, 0, 0.31, 0)
+LoopCountInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
+LoopCountInput.Text = "" -- تم الحذف
+LoopCountInput.PlaceholderText = "Loops"
+LoopCountInput.TextColor3 = Color3.new(1, 1, 1)
+Instance.new("UICorner", LoopCountInput)
+
+CreateLabel("TARGET NAME:", UDim2.new(0.075, 0, 0.46, 0), MainFrame)
 local TargetInput = Instance.new("TextBox", MainFrame)
 TargetInput.Size = UDim2.new(0.85, 0, 0, 40)
-TargetInput.Position = UDim2.new(0.075, 0, 0.60, 0)
+TargetInput.Position = UDim2.new(0.075, 0, 0.51, 0)
 TargetInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-TargetInput.Text = ""
+TargetInput.Text = "" -- تم الحذف
+TargetInput.PlaceholderText = "Target name..."
 TargetInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", TargetInput)
 
 local AttackBtn = Instance.new("TextButton", MainFrame)
 AttackBtn.Size = UDim2.new(0.85, 0, 0, 55)
-AttackBtn.Position = UDim2.new(0.075, 0, 0.78, 0)
+AttackBtn.Position = UDim2.new(0.075, 0, 0.63, 0) -- تحت الخانة مباشرة
 AttackBtn.BackgroundColor3 = Color3.fromRGB(255, 20, 60)
 AttackBtn.Text = "INSTANE ATTACK: OFF"
 AttackBtn.TextColor3 = Color3.new(1, 1, 1)
 AttackBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", AttackBtn)
 
--- [[ Anti Spam ]]
+-- [[ كود الإعدادات (Settings) كامل ]]
 local antiSpamActive = false
 local deleteTargets = {
     PlayerGui = {"CommandMenucommandLogs", "CommandMenuchatLogs", "Notices", "CustomTopBar", "CmdBar", "HDAdminNightVision"},
@@ -236,14 +211,12 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- [[ Settings GUI ]]
 local SettingsFrame = Instance.new("Frame", ScreenGui)
-SettingsFrame.Size = UDim2.new(0, 0, 0, 0)
+SettingsFrame.Size = UDim2.new(0, 380, 0, 480)
 SettingsFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
 SettingsFrame.AnchorPoint = Vector2.new(0.5, 0.5)
 SettingsFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 22)
 SettingsFrame.Visible = false
-SettingsFrame.ClipsDescendants = true
 Instance.new("UICorner", SettingsFrame).CornerRadius = UDim.new(0, 25)
 Instance.new("UIStroke", SettingsFrame).Color = Color3.fromRGB(0, 255, 255)
 
@@ -253,7 +226,6 @@ SettingsScroll.Position = UDim2.new(0.5, 0, 0.5, 20)
 SettingsScroll.AnchorPoint = Vector2.new(0.5, 0.5)
 SettingsScroll.BackgroundTransparency = 1
 SettingsScroll.CanvasSize = UDim2.new(0, 0, 0, 650)
-SettingsScroll.ScrollBarThickness = 2
 local ListLayout = Instance.new("UIListLayout", SettingsScroll)
 ListLayout.Padding = UDim.new(0, 15)
 ListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
@@ -280,7 +252,6 @@ local PrefixInput = Instance.new("TextBox", SettingsScroll)
 PrefixInput.Size = UDim2.new(0.9, 0, 0, 45)
 PrefixInput.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
 PrefixInput.Text = currentPrefix
-PrefixInput.PlaceholderText = "Prefix..."
 PrefixInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", PrefixInput)
 
@@ -307,11 +278,7 @@ Instance.new("UICorner", AddBtn)
 local CmdScroll = Instance.new("ScrollingFrame", SettingsScroll)
 CmdScroll.Size = UDim2.new(0.9, 0, 0, 160)
 CmdScroll.BackgroundColor3 = Color3.fromRGB(10, 10, 10)
-CmdScroll.AutomaticCanvasSize = Enum.AutomaticSize.Y
-CmdScroll.ScrollBarThickness = 2
-local CmdListLayout = Instance.new("UIListLayout", CmdScroll)
-CmdListLayout.Padding = UDim.new(0, 5)
-CmdListLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+Instance.new("UIListLayout", CmdScroll).Padding = UDim.new(0, 5)
 
 local function UpdateCmdListUI()
     for _, v in ipairs(CmdScroll:GetChildren()) do if v:IsA("TextButton") then v:Destroy() end end
@@ -327,19 +294,13 @@ local function UpdateCmdListUI()
 end
 UpdateCmdListUI()
 
--- [[ Remote & Logic ]]
+-- [[ Logic ]]
 local remote = ReplicatedStorage:WaitForChild("HDAdminHDClient"):WaitForChild("Signals"):WaitForChild("RequestCommandSilent")
 local attackLoop = false
 local isHeadless, isSkybox = false, false
 
-SettingsBtn.MouseButton1Click:Connect(function()
-    SettingsFrame.Visible = true
-    SettingsFrame:TweenSize(UDim2.new(0, 380, 0, 480), "Out", "Back", 0.5, true)
-end)
-
-SetClose.MouseButton1Click:Connect(function()
-    SettingsFrame:TweenSize(UDim2.new(0, 0, 0, 0), "In", "Quart", 0.3, true, function() SettingsFrame.Visible = false end)
-end)
+SettingsBtn.MouseButton1Click:Connect(function() SettingsFrame.Visible = true end)
+SetClose.MouseButton1Click:Connect(function() SettingsFrame.Visible = false end)
 
 PrefixInput:GetPropertyChangedSignal("Text"):Connect(function() currentPrefix = PrefixInput.Text end)
 
@@ -388,25 +349,20 @@ LoopBtn.MouseButton1Click:Connect(function()
     ClickEffect(LoopBtn)
     local count = math.clamp(tonumber(LoopCountInput.Text) or 1, 1, 100000)
     if CommandInput.Text ~= "" then
-        for i = 1, count do 
-            task.spawn(function() remote:InvokeServer(CommandInput.Text) end) 
-        end
+        for i = 1, count do task.spawn(function() remote:InvokeServer(CommandInput.Text) end) end
     end
 end)
 
 AttackBtn.MouseButton1Click:Connect(function()
     ClickEffect(AttackBtn)
     attackLoop = not attackLoop
-    AttackBtn.Text = attackLoop and "ATTACKING... (MAX SPEED)" or "INSTANE ATTACK: OFF"
-    AttackBtn.BackgroundColor3 = attackLoop and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(255, 20, 60)
+    AttackBtn.Text = attackLoop and "ATTACKING..." or "INSTANE ATTACK: OFF"
     if attackLoop then
         task.spawn(function()
             while attackLoop do
                 if TargetInput.Text ~= "" then
                     for _, cmd in ipairs(attackCommands) do
-                        task.spawn(function() 
-                            remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) 
-                        end)
+                        task.spawn(function() remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) end)
                     end
                 end
                 RunService.Stepped:Wait() 
