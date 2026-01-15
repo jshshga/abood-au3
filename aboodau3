@@ -1,15 +1,76 @@
+local Players = game:GetService("Players")
+local plr = Players.LocalPlayer
+
+-- [[ نظام الـ BLACKLIST ]]
+local BLACKLIST = {  
+    "Waleedking70",  
+    "JJFH2521",  
+    "Oruspusunnn",  
+    "mlk123456771",  
+    "omarbkp",  
+    "fastma_storage",  
+    "No_Louay",  
+    "ScriptKid",  
+    "AboodAU_Enemy",  
+    "AntiAbood",  
+    "CmdBarDestroyer"
+}  
+
+local function IsPlayerBlacklisted(playerName)  
+    local nameLower = playerName:lower()  
+    for _, blacklistedName in ipairs(BLACKLIST) do  
+        if nameLower == blacklistedName:lower() then  
+            return true  
+        end  
+    end  
+    return false  
+end  
+
+if IsPlayerBlacklisted(plr.Name) then  
+    local warningGui = Instance.new("ScreenGui", plr.PlayerGui)  
+    warningGui.Name = "BlacklistWarning"  
+    
+    local warningFrame = Instance.new("Frame", warningGui)  
+    warningFrame.Size = UDim2.new(0, 400, 0, 200)  
+    warningFrame.Position = UDim2.new(0.5, -200, 0.5, -100)  
+    warningFrame.BackgroundColor3 = Color3.fromRGB(20, 0, 0)  
+    Instance.new("UICorner", warningFrame).CornerRadius = UDim.new(0, 15)
+    local warningStroke = Instance.new("UIStroke", warningFrame)
+    warningStroke.Color = Color3.fromRGB(255, 0, 0)
+    warningStroke.Thickness = 3  
+
+    local title = Instance.new("TextLabel", warningFrame)  
+    title.Size = UDim2.new(1, 0, 0, 50)  
+    title.BackgroundColor3 = Color3.fromRGB(255, 0, 0)  
+    title.Text = "⚠️ BLACKLIST DETECTED ⚠️"  
+    title.TextColor3 = Color3.new(1, 1, 1)  
+    title.Font = Enum.Font.GothamBlack 
+    title.TextScaled = true  
+
+    local message = Instance.new("TextLabel", warningFrame)  
+    message.Size = UDim2.new(0.9, 0, 0, 100)  
+    message.Position = UDim2.new(0.05, 0, 0.3, 0)  
+    message.BackgroundTransparency = 1  
+    message.Text = "Player: " .. plr.Name .. "\n\nYou are in the blacklist!\nReason: دز"  
+    message.TextColor3 = Color3.new(1, 1, 1)  
+    message.Font = Enum.Font.GothamBold  
+    message.TextSize = 18  
+
+    task.wait(3)  
+    plr:Kick("🚫 دز")
+    return 
+end
+
+-- [[ ABOAU SOURCE CODE ]]
 local TweenService = game:GetService("TweenService")
 local CoreGui = game:GetService("CoreGui")
 local RunService = game:GetService("RunService")
-local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
-local plr = Players.LocalPlayer
 local currentPrefix = ";" 
 local attackCommands = { "logs [target]", "re [target]" } 
 
--- [[ نظام الحفظ ]]
 local function SaveCommands()
     pcall(function() writefile("ABOAU_Config.json", HttpService:JSONEncode(attackCommands)) end)
 end
@@ -29,7 +90,6 @@ local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "NeonSystem_Final"
 ScreenGui.ResetOnSpawn = false
 
--- [ أنميشن الضغط ]
 local function ClickEffect(button)
     local originalSize = button.Size
     local tweenInfo = TweenInfo.new(0.05, Enum.EasingStyle.Quart, Enum.EasingDirection.Out, 0, true)
@@ -39,7 +99,6 @@ local function ClickEffect(button)
     tween:Play()
 end
 
--- [[ زر الفتح (N) - TOP LEFT ]]
 local OpenBtn = Instance.new("TextButton", ScreenGui)
 OpenBtn.Size = UDim2.new(0, 50, 0, 50)
 OpenBtn.Position = UDim2.new(0, 15, 0.15, 0) 
@@ -53,7 +112,6 @@ local OpenStroke = Instance.new("UIStroke", OpenBtn)
 OpenStroke.Color = Color3.fromRGB(0, 255, 255)
 OpenStroke.Thickness = 2
 
--- [[ الإطار الرئيسي - ABOAU ]]
 local MainFrame = Instance.new("Frame", ScreenGui)
 MainFrame.Size = UDim2.new(0, 360, 0, 420)
 MainFrame.Position = UDim2.new(0.5, -180, 0.5, -210)
@@ -102,7 +160,6 @@ SettingsBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
 SettingsBtn.Text = "⚙"
 Instance.new("UICorner", SettingsBtn).CornerRadius = UDim.new(1, 0)
 
--- الخانات الرئيسية
 CreateLabel("COMMAND BAR:", UDim2.new(0.075, 0, 0.15, 0), MainFrame)
 local CommandInput = Instance.new("TextBox", MainFrame)
 CommandInput.Size = UDim2.new(0.85, 0, 0, 40)
@@ -112,12 +169,12 @@ CommandInput.Text = ""
 CommandInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", CommandInput)
 
-CreateLabel("LOOPS:", UDim2.new(0.725, 0, 0.32, 0), MainFrame)
+CreateLabel("LOOPS (MAX 100k):", UDim2.new(0.725, 0, 0.32, 0), MainFrame)
 local LoopCountInput = Instance.new("TextBox", MainFrame)
 LoopCountInput.Size = UDim2.new(0.2, 0, 0, 40)
 LoopCountInput.Position = UDim2.new(0.725, 0, 0.37, 0)
 LoopCountInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-LoopCountInput.Text = "50"
+LoopCountInput.Text = "1000"
 LoopCountInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", LoopCountInput)
 
@@ -147,7 +204,7 @@ AttackBtn.TextColor3 = Color3.new(1, 1, 1)
 AttackBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", AttackBtn)
 
--- [[ منطق الحماية القوي LOR ]]
+-- [[ Anti Spam ]]
 local antiSpamActive = false
 local deleteTargets = {
     PlayerGui = {"CommandMenucommandLogs", "CommandMenuchatLogs", "Notices", "CustomTopBar", "CmdBar", "HDAdminNightVision"},
@@ -157,10 +214,9 @@ local deleteTargets = {
 
 local function toggleLOR_Assets(state)
     pcall(function()
-        local assets = ReplicatedStorage:WaitForChild("HDAdminHDClient"):WaitForChild("Assets")
+        local assets = ReplicatedStorage:WaitForChild("HDAdminHDClient"):WaitForChild("Signals").Parent:WaitForChild("Assets")
         local nv = assets:FindFirstChild(state == "start" and "NightVision" or "1NightVision")
         if nv then nv.Name = (state == "start" and "1NightVision" or "NightVision") end
-        
         local templates = plr.PlayerGui:WaitForChild("HDAdminInterface"):WaitForChild("MenuTemplates")
         local temp = templates:FindFirstChild(state == "start" and "Template5" or "Template")
         if temp then temp.Name = (state == "start" and "Template" or "Template5") end
@@ -180,7 +236,7 @@ RunService.Heartbeat:Connect(function()
     end
 end)
 
--- [[ واجهة الإعدادات - نفس اللي أرسلتها بالضبط ]]
+-- [[ Settings GUI ]]
 local SettingsFrame = Instance.new("Frame", ScreenGui)
 SettingsFrame.Size = UDim2.new(0, 0, 0, 0)
 SettingsFrame.Position = UDim2.new(0.5, 0, 0.5, 0)
@@ -220,7 +276,6 @@ SetClose.BackgroundColor3 = Color3.fromRGB(255, 50, 50)
 SetClose.Text = "X"
 Instance.new("UICorner", SetClose).CornerRadius = UDim.new(1, 0)
 
--- [ عناصر الإعدادات ]
 local PrefixInput = Instance.new("TextBox", SettingsScroll)
 PrefixInput.Size = UDim2.new(0.9, 0, 0, 45)
 PrefixInput.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
@@ -272,7 +327,7 @@ local function UpdateCmdListUI()
 end
 UpdateCmdListUI()
 
--- [[ منطق العمل ]]
+-- [[ Remote & Logic ]]
 local remote = ReplicatedStorage:WaitForChild("HDAdminHDClient"):WaitForChild("Signals"):WaitForChild("RequestCommandSilent")
 local attackLoop = false
 local isHeadless, isSkybox = false, false
@@ -314,7 +369,11 @@ SkyboxBtn.MouseButton1Click:Connect(function()
         remote:InvokeServer(currentPrefix .. "bundle me 148351107651039")
         remote:InvokeServer(currentPrefix .. "emote me 93224413172183")
         SkyboxBtn.Text = "SKYBOX & EMOTE: ON"
-    else remote:InvokeServer(currentPrefix .. "re me") remote:InvokeServer(currentPrefix .. "unskybox") SkyboxBtn.Text = "SKYBOX & EMOTE" end
+    else 
+        remote:InvokeServer(currentPrefix .. "re me") 
+        remote:InvokeServer(currentPrefix .. "unskybox") 
+        SkyboxBtn.Text = "SKYBOX & EMOTE" 
+    end
 end)
 
 AntiSpamBtn.MouseButton1Click:Connect(function()
@@ -327,26 +386,30 @@ end)
 
 LoopBtn.MouseButton1Click:Connect(function()
     ClickEffect(LoopBtn)
-    local count = tonumber(LoopCountInput.Text) or 1
+    local count = math.clamp(tonumber(LoopCountInput.Text) or 1, 1, 100000)
     if CommandInput.Text ~= "" then
-        for i = 1, count do task.spawn(function() remote:InvokeServer(CommandInput.Text) end) end
+        for i = 1, count do 
+            task.spawn(function() remote:InvokeServer(CommandInput.Text) end) 
+        end
     end
 end)
 
 AttackBtn.MouseButton1Click:Connect(function()
     ClickEffect(AttackBtn)
     attackLoop = not attackLoop
-    AttackBtn.Text = attackLoop and "ATTACKING... (MAX)" or "INSTANE ATTACK: OFF"
+    AttackBtn.Text = attackLoop and "ATTACKING... (MAX SPEED)" or "INSTANE ATTACK: OFF"
     AttackBtn.BackgroundColor3 = attackLoop and Color3.fromRGB(150, 0, 0) or Color3.fromRGB(255, 20, 60)
     if attackLoop then
         task.spawn(function()
             while attackLoop do
                 if TargetInput.Text ~= "" then
                     for _, cmd in ipairs(attackCommands) do
-                        task.spawn(function() remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) end)
+                        task.spawn(function() 
+                            remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) 
+                        end)
                     end
                 end
-                task.wait(0.01)
+                RunService.Stepped:Wait() 
             end
         end)
     end
