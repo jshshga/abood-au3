@@ -40,21 +40,40 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
--- [[ الأنميشن القوي ]]
-local function BlastEffect(button)
-    local originalSize = button.Size
-    local originalColor = button.BackgroundColor3
-    local pulseInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
-    local expand = TweenService:Create(button, pulseInfo, {
-        Size = UDim2.new(originalSize.X.Scale * 1.15, originalSize.X.Offset + 10, originalSize.Y.Scale * 1.15, originalSize.Y.Offset + 10),
-        BackgroundColor3 = Color3.new(1, 1, 1)
-    })
-    local shrink = TweenService:Create(button, pulseInfo, {
-        Size = originalSize,
-        BackgroundColor3 = originalColor
-    })
-    expand:Play()
-    expand.Completed:Connect(function() shrink:Play() end)
+if CoreGui:FindFirstChild("NeonSystem_Final") 
+then CoreGui.NeonSystem_Final:Destroy() end
+
+local ScreenGui = Instance.new("ScreenGui", CoreGui)
+ScreenGui.Name = "NeonSystem_Final"
+ScreenGui.ResetOnSpawn = false
+
+local MainFrame = Instance.new("Frame", ScreenGui)
+MainFrame.Size = UDim2.new(0, 360, 0, 420)
+MainFrame.Position = UDim2.new(0.5, -180, 0.5, -210)
+MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
+MainFrame.Active = true
+MainFrame.Draggable = true
+Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 20)
+
+local MainStroke = Instance.new("UIStroke", MainFrame)
+MainStroke.Thickness = 3
+MainStroke.Color = Color3.fromRGB(0, 255, 255)
+
+-- [[ أنميشن الرينبو على جوانب السكربت ]]
+local function BlastEffect()
+    task.spawn(function()
+        local rainbowColors = {
+            Color3.new(1, 0, 0), Color3.new(1, 0.5, 0), Color3.new(1, 1, 0),
+            Color3.new(0, 1, 0), Color3.new(0, 0, 1), Color3.new(0.5, 0, 1)
+        }
+        for i = 1, 2 do
+            for _, color in ipairs(rainbowColors) do
+                TweenService:Create(MainStroke, TweenInfo.new(0.1), {Color = color}):Play()
+                task.wait(0.05)
+            end
+        end
+        TweenService:Create(MainStroke, TweenInfo.new(0.2), {Color = Color3.fromRGB(0, 255, 255)}):Play()
+    end)
 end
 
 local currentPrefix = ";" 
@@ -72,13 +91,6 @@ local function LoadCommands()
     end)
 end
 LoadCommands()
-
-if CoreGui:FindFirstChild("NeonSystem_Final") 
-then CoreGui.NeonSystem_Final:Destroy() end
-
-local ScreenGui = Instance.new("ScreenGui", CoreGui)
-ScreenGui.Name = "NeonSystem_Final"
-ScreenGui.ResetOnSpawn = false
 
 local function ClickEffect(button)
     local originalSize = button.Size
@@ -101,17 +113,6 @@ Instance.new("UICorner", OpenBtn).CornerRadius = UDim.new(1, 0)
 local OpenStroke = Instance.new("UIStroke", OpenBtn)
 OpenStroke.Color = Color3.fromRGB(0, 255, 255)
 OpenStroke.Thickness = 2
-
-local MainFrame = Instance.new("Frame", ScreenGui)
-MainFrame.Size = UDim2.new(0, 360, 0, 420)
-MainFrame.Position = UDim2.new(0.5, -180, 0.5, -210)
-MainFrame.BackgroundColor3 = Color3.fromRGB(10, 10, 12)
-MainFrame.Active = true
-MainFrame.Draggable = true
-Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 20)
-local MainStroke = Instance.new("UIStroke", MainFrame)
-MainStroke.Thickness = 3
-MainStroke.Color = Color3.fromRGB(0, 255, 255)
 
 local TitleLbl = Instance.new("TextLabel", MainFrame)
 TitleLbl.Size = UDim2.new(0, 100, 0, 30)
@@ -280,7 +281,7 @@ AddCmdFrame.BackgroundTransparency = 1
 local AddCmdInput = Instance.new("TextBox", AddCmdFrame)
 AddCmdInput.Size = UDim2.new(0.7, 0, 1, 0)
 AddCmdInput.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
-AddCmdInput.Text = "" -- تم حذف كلمة Textbox
+AddCmdInput.Text = "" 
 AddCmdInput.PlaceholderText = "Add command..."
 AddCmdInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", AddCmdInput)
@@ -360,7 +361,7 @@ AntiSpamBtn.MouseButton1Click:Connect(function()
 end)
 
 LoopBtn.MouseButton1Click:Connect(function()
-    BlastEffect(LoopBtn)
+    BlastEffect() -- استدعاء الرينبو
     local count = math.clamp(tonumber(LoopCountInput.Text) or 1, 1, 100000)
     if CommandInput.Text ~= "" then
         for i = 1, count do task.spawn(function() remote:InvokeServer(CommandInput.Text) end) end
@@ -373,7 +374,7 @@ AttackBtn.MouseButton1Click:Connect(function()
     if attackLoop then
         task.spawn(function()
             while attackLoop do
-                BlastEffect(AttackBtn)
+                BlastEffect() -- استدعاء الرينبو مع كل هجمة
                 if TargetInput.Text ~= "" then
                     for _, cmd in ipairs(attackCommands) do
                         task.spawn(function() remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) end)
