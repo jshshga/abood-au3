@@ -3,7 +3,7 @@ local plr = Players.LocalPlayer
 
 -- [[ نظام الـ BLACKLIST ]]
 local BLACKLIST = {  
-    "Waleedking70", "JJFH2521", "Oruspusunnn", "mlk123456771", "omarbkp", 
+    "Waleedking70", "JJFH23456771", "omarbkp", 
     "fastma_storage", "No_Louay", "ScriptKid", "AboodAU_Enemy", "AntiAbood", "CmdBarDestroyer"
 }  
 
@@ -40,6 +40,23 @@ local RunService = game:GetService("RunService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local HttpService = game:GetService("HttpService")
 
+-- [[ الأنميشن القوي ]]
+local function BlastEffect(button)
+    local originalSize = button.Size
+    local originalColor = button.BackgroundColor3
+    local pulseInfo = TweenInfo.new(0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.Out)
+    local expand = TweenService:Create(button, pulseInfo, {
+        Size = UDim2.new(originalSize.X.Scale * 1.15, originalSize.X.Offset + 10, originalSize.Y.Scale * 1.15, originalSize.Y.Offset + 10),
+        BackgroundColor3 = Color3.new(1, 1, 1)
+    })
+    local shrink = TweenService:Create(button, pulseInfo, {
+        Size = originalSize,
+        BackgroundColor3 = originalColor
+    })
+    expand:Play()
+    expand.Completed:Connect(function() shrink:Play() end)
+end
+
 local currentPrefix = ";" 
 local attackCommands = { "logs [target]", "re [target]" } 
 
@@ -56,7 +73,8 @@ local function LoadCommands()
 end
 LoadCommands()
 
-if CoreGui:FindFirstChild("NeonSystem_Final") then CoreGui.NeonSystem_Final:Destroy() end
+if CoreGui:FindFirstChild("NeonSystem_Final") 
+then CoreGui.NeonSystem_Final:Destroy() end
 
 local ScreenGui = Instance.new("ScreenGui", CoreGui)
 ScreenGui.Name = "NeonSystem_Final"
@@ -131,21 +149,19 @@ SettingsBtn.BackgroundColor3 = Color3.fromRGB(0, 140, 255)
 SettingsBtn.Text = "⚙"
 Instance.new("UICorner", SettingsBtn).CornerRadius = UDim.new(1, 0)
 
--- [[ تعديل الخانات والأزرار ]]
-
 CreateLabel("COMMAND BAR:", UDim2.new(0.075, 0, 0.15, 0), MainFrame)
 local CommandInput = Instance.new("TextBox", MainFrame)
 CommandInput.Size = UDim2.new(0.85, 0, 0, 40)
 CommandInput.Position = UDim2.new(0.075, 0, 0.20, 0)
 CommandInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-CommandInput.Text = "" -- تم الحذف
+CommandInput.Text = "" 
 CommandInput.PlaceholderText = "Enter command..."
 CommandInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", CommandInput)
 
 local LoopBtn = Instance.new("TextButton", MainFrame)
 LoopBtn.Size = UDim2.new(0.6, 0, 0, 40)
-LoopBtn.Position = UDim2.new(0.075, 0, 0.31, 0) -- تحت الخانة مباشرة
+LoopBtn.Position = UDim2.new(0.075, 0, 0.31, 0) 
 LoopBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
 LoopBtn.Text = "GIGA BLAST"
 LoopBtn.Font = Enum.Font.GothamBold
@@ -155,7 +171,7 @@ local LoopCountInput = Instance.new("TextBox", MainFrame)
 LoopCountInput.Size = UDim2.new(0.2, 0, 0, 40)
 LoopCountInput.Position = UDim2.new(0.725, 0, 0.31, 0)
 LoopCountInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-LoopCountInput.Text = "" -- تم الحذف
+LoopCountInput.Text = "" 
 LoopCountInput.PlaceholderText = "Loops"
 LoopCountInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", LoopCountInput)
@@ -165,24 +181,23 @@ local TargetInput = Instance.new("TextBox", MainFrame)
 TargetInput.Size = UDim2.new(0.85, 0, 0, 40)
 TargetInput.Position = UDim2.new(0.075, 0, 0.51, 0)
 TargetInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-TargetInput.Text = "" -- تم الحذف
+TargetInput.Text = "" 
 TargetInput.PlaceholderText = "Target name..."
 TargetInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", TargetInput)
 
 local AttackBtn = Instance.new("TextButton", MainFrame)
 AttackBtn.Size = UDim2.new(0.85, 0, 0, 55)
-AttackBtn.Position = UDim2.new(0.075, 0, 0.63, 0) -- تحت الخانة مباشرة
+AttackBtn.Position = UDim2.new(0.075, 0, 0.63, 0) 
 AttackBtn.BackgroundColor3 = Color3.fromRGB(255, 20, 60)
 AttackBtn.Text = "INSTANE ATTACK: OFF"
 AttackBtn.TextColor3 = Color3.new(1, 1, 1)
 AttackBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", AttackBtn)
 
--- [[ كود الإعدادات (Settings) كامل ]]
 local antiSpamActive = false
 local deleteTargets = {
-    PlayerGui = {"CommandMenucommandLogs", "CommandMenuchatLogs", "Notices", "CustomTopBar", "CmdBar", "HDAdminNightVision"},
+    PlayerGui = {"CommandMenucommandLogs", "CommandMenuchatLogs", "Notices", "CustomTopBar", "CmdBar"},
     Workspace = {"HDAdminNightVision"},
     Characters = {"HDAdminNightVision"}
 }
@@ -265,6 +280,7 @@ AddCmdFrame.BackgroundTransparency = 1
 local AddCmdInput = Instance.new("TextBox", AddCmdFrame)
 AddCmdInput.Size = UDim2.new(0.7, 0, 1, 0)
 AddCmdInput.BackgroundColor3 = Color3.fromRGB(35, 35, 40)
+AddCmdInput.Text = "" -- تم حذف كلمة Textbox
 AddCmdInput.PlaceholderText = "Add command..."
 AddCmdInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", AddCmdInput)
@@ -294,14 +310,12 @@ local function UpdateCmdListUI()
 end
 UpdateCmdListUI()
 
--- [[ Logic ]]
 local remote = ReplicatedStorage:WaitForChild("HDAdminHDClient"):WaitForChild("Signals"):WaitForChild("RequestCommandSilent")
 local attackLoop = false
 local isHeadless, isSkybox = false, false
 
 SettingsBtn.MouseButton1Click:Connect(function() SettingsFrame.Visible = true end)
 SetClose.MouseButton1Click:Connect(function() SettingsFrame.Visible = false end)
-
 PrefixInput:GetPropertyChangedSignal("Text"):Connect(function() currentPrefix = PrefixInput.Text end)
 
 AddBtn.MouseButton1Click:Connect(function() 
@@ -346,7 +360,7 @@ AntiSpamBtn.MouseButton1Click:Connect(function()
 end)
 
 LoopBtn.MouseButton1Click:Connect(function()
-    ClickEffect(LoopBtn)
+    BlastEffect(LoopBtn)
     local count = math.clamp(tonumber(LoopCountInput.Text) or 1, 1, 100000)
     if CommandInput.Text ~= "" then
         for i = 1, count do task.spawn(function() remote:InvokeServer(CommandInput.Text) end) end
@@ -354,18 +368,18 @@ LoopBtn.MouseButton1Click:Connect(function()
 end)
 
 AttackBtn.MouseButton1Click:Connect(function()
-    ClickEffect(AttackBtn)
     attackLoop = not attackLoop
     AttackBtn.Text = attackLoop and "ATTACKING..." or "INSTANE ATTACK: OFF"
     if attackLoop then
         task.spawn(function()
             while attackLoop do
+                BlastEffect(AttackBtn)
                 if TargetInput.Text ~= "" then
                     for _, cmd in ipairs(attackCommands) do
                         task.spawn(function() remote:InvokeServer(currentPrefix .. cmd:gsub("%[target%]", TargetInput.Text)) end)
                     end
                 end
-                RunService.Stepped:Wait() 
+                task.wait(0.2)
             end
         end)
     end
