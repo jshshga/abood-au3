@@ -164,7 +164,7 @@ local LoopBtn = Instance.new("TextButton", MainFrame)
 LoopBtn.Size = UDim2.new(0.6, 0, 0, 40)
 LoopBtn.Position = UDim2.new(0.075, 0, 0.31, 0) 
 LoopBtn.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
-LoopBtn.Text = "GIGA BLAST"
+LoopBtn.Text = "SEND COMMAND"
 LoopBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", LoopBtn)
 
@@ -191,7 +191,7 @@ local AttackBtn = Instance.new("TextButton", MainFrame)
 AttackBtn.Size = UDim2.new(0.85, 0, 0, 55)
 AttackBtn.Position = UDim2.new(0.075, 0, 0.63, 0) 
 AttackBtn.BackgroundColor3 = Color3.fromRGB(255, 20, 60)
-AttackBtn.Text = "INSTANE ATTACK: OFF"
+AttackBtn.Text = "START: OFF"
 AttackBtn.TextColor3 = Color3.new(1, 1, 1)
 AttackBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", AttackBtn)
