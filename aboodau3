@@ -1,4 +1,4 @@
-local Players = game:GetService("Players")
+plocal Players = game:GetService("Players")
 local plr = Players.LocalPlayer
 
 -- [[ نظام الـ BLACKLIST ]]
