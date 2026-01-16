@@ -172,8 +172,8 @@ local LoopCountInput = Instance.new("TextBox", MainFrame)
 LoopCountInput.Size = UDim2.new(0.2, 0, 0, 40)
 LoopCountInput.Position = UDim2.new(0.725, 0, 0.31, 0)
 LoopCountInput.BackgroundColor3 = Color3.fromRGB(30, 30, 33)
-LoopCountInput.Text = "1" 
-LoopCountInput.PlaceholderText = "Loops"
+LoopCountInput.Text = "1" -- تم التعديل هنا: الخانة ستظهر برقم 1 تلقائياً
+LoopCountInput.PlaceholderText = "1"
 LoopCountInput.TextColor3 = Color3.new(1, 1, 1)
 Instance.new("UICorner", LoopCountInput)
 
@@ -191,7 +191,7 @@ local AttackBtn = Instance.new("TextButton", MainFrame)
 AttackBtn.Size = UDim2.new(0.85, 0, 0, 55)
 AttackBtn.Position = UDim2.new(0.075, 0, 0.63, 0) 
 AttackBtn.BackgroundColor3 = Color3.fromRGB(255, 20, 60)
-AttackBtn.Text = "START SEND" -- تم التعديل هنا
+AttackBtn.Text = "START SEND" 
 AttackBtn.TextColor3 = Color3.new(1, 1, 1)
 AttackBtn.Font = Enum.Font.GothamBold
 Instance.new("UICorner", AttackBtn)
@@ -370,7 +370,7 @@ end)
 
 AttackBtn.MouseButton1Click:Connect(function()
     attackLoop = not attackLoop
-    AttackBtn.Text = attackLoop and "STOP" or "START SEND" -- تم التعديل هنا
+    AttackBtn.Text = attackLoop and "STOP" or "START SEND" 
     if attackLoop then
         task.spawn(function()
             while attackLoop do
