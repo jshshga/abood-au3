@@ -4,7 +4,7 @@ local plr = Players.LocalPlayer
 -- [[ نظام الـ BLACKLIST ]]
 local BLACKLIST = {  
     "Waleedking70", "JJFH23456771", "omarbkp", 
-    "fastma_storage", "No_Louay", "ScriptKid", "AboodAU_Enemy", "AntiAbood", "CmdBarDestroyer"
+    "fastma_storage", "No_Louay", "3b00d_16", "AboodAU_Enemy", "AntiAbood", "CmdBarDestroyer"
 }  
 
 local function IsPlayerBlacklisted(playerName)  
