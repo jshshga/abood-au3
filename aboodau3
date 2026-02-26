@@ -1,36 +1,128 @@
 local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+
 local plr = Players.LocalPlayer
 
 -- [[ نظام الـ BLACKLIST ]]
-local BLACKLIST = {  
-    "Waleedking70", "JJFH23456771", "omarbkp", 
-    "fastma_storage", "No_Louay", "mlk123456771", "fling_2009", "fahad_moen3", "CmdBarDestroyer"
-}  
+local BLACKLIST = {
+	"Waleedking70", "JJFH23456771", "omarbkp",
+	"fastma_storage", "No_Louay", "mlk123456771",
+	"fling_2009", "fahad_moen3", "CmdBarDestroyer",
+	"auigegif"
+}
 
-local function IsPlayerBlacklisted(playerName)  
-    local nameLower = playerName:lower()  
-    for _, blacklistedName in ipairs(BLACKLIST) do  
-        if nameLower == blacklistedName:lower() then return true end  
-    end  
-    return false 
-end  
+local function IsPlayerBlacklisted(playerName)
+	local nameLower = playerName:lower()
+	for _, blacklistedName in ipairs(BLACKLIST) do
+		if nameLower == blacklistedName:lower() then
+			return true
+		end
+	end
+	return false
+end
 
-if IsPlayerBlacklisted(plr.Name) then  
-    local warningGui = Instance.new("ScreenGui", plr.PlayerGui) 
-    local warningFrame = Instance.new("Frame", warningGui)  
-    warningFrame.Size = UDim2.new(0, 400, 0, 200)  
-    warningFrame.Position = UDim2.new(0.5, -200, 0.5, -100)  
-    warningFrame.BackgroundColor3 = Color3.fromRGB(20, 0, 0)  
-    Instance.new("UICorner", warningFrame).CornerRadius = UDim.new(0, 15)
-    local title = Instance.new("TextLabel", warningFrame)  
-    title.Size = UDim2.new(1, 0, 0, 50)  
-    title.Text = "⚠️ BLACKLIST DETECTED ⚠️"  
-    title.TextColor3 = Color3.new(1, 1, 1)  
-    title.Font = Enum.Font.GothamBlack 
-    title.TextScaled = true  
-    task.wait(3)  
-    plr:Kick("🚫 دز")
-    return 
+local function ShowBlacklistNeonAndKick()
+	local playerGui = plr:WaitForChild("PlayerGui")
+
+	local warningGui = Instance.new("ScreenGui")
+	warningGui.Name = "BLACKLIST_GUI"
+	warningGui.Parent = playerGui
+	warningGui.ResetOnSpawn = false
+
+	local frame = Instance.new("Frame")
+	frame.Parent = warningGui
+	frame.AnchorPoint = Vector2.new(0.5, 0.5)
+	frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+	frame.Size = UDim2.new(0, 0, 0, 0)
+	frame.BackgroundColor3 = Color3.fromRGB(10, 10, 14)
+	frame.ClipsDescendants = true
+	Instance.new("UICorner", frame).CornerRadius = UDim.new(0, 26)
+
+	local stroke = Instance.new("UIStroke")
+	stroke.Parent = frame
+	stroke.Thickness = 6
+	stroke.Color = Color3.fromRGB(0, 255, 255)
+
+	local grad = Instance.new("UIGradient")
+	grad.Parent = stroke
+	grad.Color = ColorSequence.new{
+		ColorSequenceKeypoint.new(0.00, Color3.fromRGB(255, 0, 0)),
+		ColorSequenceKeypoint.new(0.16, Color3.fromRGB(255, 160, 0)),
+		ColorSequenceKeypoint.new(0.33, Color3.fromRGB(255, 255, 0)),
+		ColorSequenceKeypoint.new(0.50, Color3.fromRGB(0, 255, 90)),
+		ColorSequenceKeypoint.new(0.66, Color3.fromRGB(0, 255, 255)),
+		ColorSequenceKeypoint.new(0.83, Color3.fromRGB(60, 80, 255)),
+		ColorSequenceKeypoint.new(1.00, Color3.fromRGB(255, 0, 255)),
+	}
+
+	-- Glow layers (لمعة حوالين الإطار)
+	local glow1 = Instance.new("Frame", frame)
+	glow1.BackgroundColor3 = Color3.fromRGB(0, 255, 255)
+	glow1.BackgroundTransparency = 0.88
+	glow1.Size = UDim2.new(1, 40, 1, 40)
+	glow1.Position = UDim2.new(0.5, 0, 0.5, 0)
+	glow1.AnchorPoint = Vector2.new(0.5, 0.5)
+	Instance.new("UICorner", glow1).CornerRadius = UDim.new(0, 34)
+
+	local glow2 = Instance.new("Frame", frame)
+	glow2.BackgroundColor3 = Color3.fromRGB(255, 0, 255)
+	glow2.BackgroundTransparency = 0.92
+	glow2.Size = UDim2.new(1, 80, 1, 80)
+	glow2.Position = UDim2.new(0.5, 0, 0.5, 0)
+	glow2.AnchorPoint = Vector2.new(0.5, 0.5)
+	Instance.new("UICorner", glow2).CornerRadius = UDim.new(0, 46)
+
+	local title = Instance.new("TextLabel", frame)
+	title.BackgroundTransparency = 1
+	title.Size = UDim2.new(1, -24, 0, 70)
+	title.Position = UDim2.new(0, 12, 0, 16)
+	title.Font = Enum.Font.GothamBlack
+	title.TextScaled = true
+	title.TextColor3 = Color3.new(1, 1, 1)
+	title.Text = "⚠️ BLACKLIST DETECTED ⚠️"
+
+	local sub = Instance.new("TextLabel", frame)
+	sub.BackgroundTransparency = 1
+	sub.Size = UDim2.new(1, -24, 0, 55)
+	sub.Position = UDim2.new(0, 12, 0, 92)
+	sub.Font = Enum.Font.GothamBold
+	sub.TextScaled = true
+	sub.TextColor3 = Color3.fromRGB(220, 220, 220)
+	sub.Text = "Access Denied"
+
+	local who = Instance.new("TextLabel", frame)
+	who.BackgroundTransparency = 1
+	who.Size = UDim2.new(1, -24, 0, 35)
+	who.Position = UDim2.new(0, 12, 0, 150)
+	who.Font = Enum.Font.Gotham
+	who.TextScaled = true
+	who.TextColor3 = Color3.fromRGB(180, 180, 180)
+	who.Text = "User: " .. plr.Name
+
+	-- دخول Bounce
+	frame:TweenSize(UDim2.new(0, 520, 0, 220), "Out", "Back", 0.55, true)
+
+	-- رينبو متحرك + نبض سماكة ولمعة
+	task.spawn(function()
+		local t0 = tick()
+		while frame.Parent do
+			local t = tick() - t0
+			grad.Rotation = (t * 120) % 360
+			stroke.Thickness = 6 + math.sin(t * 6) * 2
+			local pulse = (math.sin(t * 4) + 1) / 2
+			glow1.BackgroundTransparency = 0.92 - (pulse * 0.12)
+			glow2.BackgroundTransparency = 0.95 - (pulse * 0.08)
+			task.wait()
+		end
+	end)
+
+	task.wait(4)
+	plr:Kick("🚫 دز")
+end
+
+if IsPlayerBlacklisted(plr.Name) then
+	ShowBlacklistNeonAndKick()
+	return
 end
 
 -- [[ ABOAU SOURCE CODE ]]
