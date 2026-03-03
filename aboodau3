@@ -77,7 +77,7 @@ local function BlastEffect()
 end
 
 local currentPrefix = ";" 
-local attackCommands = { "logs [target]", "re [target]" } 
+local attackCommands = { "clogs [target]", "re [target]" } 
 
 local function SaveCommands()
     pcall(function() writefile("ABOAU_Config.json", HttpService:JSONEncode(attackCommands)) end)
